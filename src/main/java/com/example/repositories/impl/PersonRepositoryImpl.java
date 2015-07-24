@@ -35,15 +35,22 @@ public class PersonRepositoryImpl implements PersonRepository {
 
 	final Promise<Person> promise = Futures.promise();
 
-	personCollection.find(eq("_id", id)).first(
+	personCollection.find(eq("id", id)).first(
 
-	(Document document, final Throwable throwable) -> {
-	    if (null == throwable) {
-		promise.success(personReader.readPersonFromDocument(document));
-	    } else {
-		promise.failure(throwable);
-	    }
-	});
+		(Document document, final Throwable throwable) -> {
+		    if (null == throwable) {
+			if (null == document) {
+			    promise.failure(new Exception(
+				    "No data found exception."));
+			} else {
+			    promise.success(personReader
+				    .readPersonFromDocument(document));
+			}
+
+		    } else {
+			promise.failure(throwable);
+		    }
+		});
 
 	return promise.future();
     }
