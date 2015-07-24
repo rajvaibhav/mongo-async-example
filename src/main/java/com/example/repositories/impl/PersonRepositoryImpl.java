@@ -15,6 +15,7 @@ import com.example.entities.reader.PersonReader;
 import com.example.entities.reader.impl.PersonReaderImpl;
 import com.example.factories.MongoConnectionFactory;
 import com.example.repositories.PersonRepository;
+import com.example.repositories.exception.DataNotFoundException;
 import com.mongodb.async.client.MongoCollection;
 import com.mongodb.async.client.MongoDatabase;
 
@@ -40,8 +41,8 @@ public class PersonRepositoryImpl implements PersonRepository {
 		(Document document, final Throwable throwable) -> {
 		    if (null == throwable) {
 			if (null == document) {
-			    promise.failure(new Exception(
-				    "No data found exception."));
+			    promise.failure(new DataNotFoundException(
+				    "No data found for the query."));
 			} else {
 			    promise.success(personReader
 				    .readPersonFromDocument(document));
